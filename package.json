@@ -1,0 +1,24 @@
+{
+  "name": "d3-testing-ground",
+  "version": "1.0.0",
+  "description": "testing ground",
+  "main": "index.js",
+  "dependencies": {
+    "d3": "^5.0.0",
+    "d3-scale": "^2.0.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/quiddler/d3.git"
+  },
+  "author": "Eliot Easterling",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/quiddler/d3/issues"
+  },
+  "homepage": "https://github.com/quiddler/d3#readme"
+}
