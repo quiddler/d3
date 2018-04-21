@@ -1,0 +1,43 @@
+body, html, p {
+    margin: 0;
+    padding: 0;
+    border: none;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+.bounce {
+    position: absolute;
+    animation: bounce 1s ease-in;
+    margin: auto;
+}
+
+@keyframes bounce {
+    0% {
+        top: 0px;
+    }
+    50% {
+        top: 25px;
+    }
+    75% {
+        top: 0px;
+    }
+    90% {
+        top: 5px;
+    }
+    100% {
+        top: 0px;
+    }
+}
+
+.container {
+    width: 100%;
+    position: relative;
+    height: 100px;
+    background: #ccc;
+    margin: 0;
+    padding: 20px;
+    box-sizing: border-box;
+}

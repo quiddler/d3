@@ -3,10 +3,266 @@
 <head>
 	<title>d3 Demo</title>
 	<script type="text/javascript" src="https://d3js.org/d3.v5.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="./styles.css">
 </head>
 <body>
-	<script type="text/javascript">
-		console.log(d3.version);
-	</script>
+    <svg width="500" height="400" style="border: none; margin: 0; padding: 0;">
+      
+      <circle cx="100" cy="70" r="10" fill="red"/>
+      <circle cx="200" cy="70" r="20" fill="blue"/>
+      
+      <rect x="100" y="70" width="100" 
+       height="60" fill="blue"/>
+      
+      <ellipse cx="150" cy="210" rx="100" ry="25"
+       fill="orange"/>
+      
+      <line x1="240" y1="10" x2="285" y2="150" stroke="red" stroke-width="5px"/>
+      
+      <text x="20" y="280" font-family="serif" 
+       font-size="25">Hope you die son!</text>
+    </svg>
+
+    <div class="container">
+        <p>hi</p>
+        <p id="wicked">there</p>
+    </div>
+
+    <div class="container">
+        <p>ugh</p>
+        <p>right</p>
+    </div>
+
+    <div class="container">
+        <input type="checkbox" name="cb1" autofocus="true">help
+        <input type="number" name="cb1"> me
+    </div>
+
+    <svg width="500" height="500" style="border: 1px solid #ccc" id="barChart"></svg>
+
+    <svg width="500" height="500" style="border: 1px solid #ccc" id="barChart2"></svg>
+    
+    <script type="text/javascript">
+
+        // --------------------------------------------------------------------------  nest()
+
+        var tweets = [
+            {user: 'John', topic: 'technology', numberOfTweets: 10},
+            {user: 'John', topic: 'politics', numberOfTweets: 30},
+            {user: 'Jack', topic: 'technology', numberOfTweets: 20},
+            {user: 'John', topic: 'entertainment', numberOfTweets: 5},
+            {user: 'Jack', topic: 'politics', numberOfTweets: 10}
+        ];
+
+        console.log(
+        d3.nest()
+            .key(function(d) { return d.user; })
+            .entries(tweets)
+        );
+
+        // --------------------------------------------------------------------------  version
+
+        console.log(d3.version);
+
+        // --------------------------------------------------------------------------  DOM Manipulation
+
+        d3.selectAll('#wicked')
+            .style('float', 'right')
+            .style('color', (d, i, nodes) => {          // all accessor functions have the same three variables passed to them !!!
+                console.log("d", d);                    // data bound to the current object
+                console.log("i", i);                    // index
+                nodes[i].style.color = 'red';           // html nodes -> hence the style property access ( this doesn't work tho )
+                return 'green';
+            });        
+        d3.select('svg')
+            .style('background', '#eee');
+        
+        d3.select('circle')
+            .attr('r', '40');
+
+        d3.select('p')
+            .classed('bounce', true)                    // pass false in to remove the class
+            .html('<b>What up son</b>')
+            .style('color', 'blue')
+            .append('span')                             // returns a new selection ( see 'insert' and 'remove' as well )
+                .style('color', 'red')                      // also see 'filter', 'merge' and 'each'
+                .text(' grr')
+                .node();
+
+        d3.selectAll('input')
+            .property('checked', (d, i, nodes) => {
+                let x = 0;
+                setInterval( () => {
+                    if (i == 0)
+                        nodes[i].checked = !nodes[i].checked;
+                    else if (x % 2 == 0)
+                        nodes[i].value++;
+                    x++;
+                }, 1000);
+                return false;
+            });
+
+
+        // --------------------------------------------------------------------------  file input
+
+        let a = d3.csvParse("name,age\nJohn,28\nAlfred,21");
+        console.log(a);
+
+        // for arbitrary delimiters do:
+        const psv = d3.dsvFormat('|')
+        let b = psv.parse('name|age\nJohn|28\nAlfred|21');
+        console.log(b);
+
+        // --------------------------------------------------------------------------  data binding
+
+        // adding the __data__ property to DOM objects
+
+        const data = [{key: "money", value: 50}, {key: "money", value: 60}];
+
+        const circles = d3.select("svg")
+                            .selectAll("circle")
+                            // assigns $30 to the first circle and $40 to the second ( above )
+                            .data(data)             
+                                .each( (d, i, nodes) => {
+                                    d3.select(nodes[i])             // selects each circle object
+                                        .style('stroke', 'yellow')
+                                        .style('stroke-width', '5px')
+                                        .attr('cx', (d, i, nodes) => nodes[i].__data__.value); // the __data__ property
+
+                                    console.log('this', this);
+                                    console.log('d', d);
+                                    console.log('nodes', nodes);
+                                });
+
+
+        // --------------------------------------------------------------------------  arrays
+
+
+        const arr = [20, 14, 32, 8, 16, 2];
+         
+        d3.min(arr); // 2
+        d3.max(arr); // 32
+        d3.extent(arr); // [2, 32]
+        d3.sum(arr); // 92
+        d3.mean(arr); // 15.333333333333334
+        d3.merge([[1, 2], [3, 4, 5]]); // [1, 2, 3, 4, 5]
+        d3.ticks(0, 10, 5); // [0, 2, 4, 6, 8, 10]
+        d3.tickStep(0, 10, 5); // 2
+         
+        // Note the following
+        d3.min(["52", "8"]); // "52" - This is because elements are compared using natural order rather than numeric order.
+        d3.max(["12", "2"]); // "2" - This is because elements are compared using natural order rather than numeric order.
+         
+        d3.max([
+                 {name: 'John', age: 28}, 
+                 {name: 'Jack', age: 35}
+               ], function(d, i) {return d.age;}); // 35
+
+
+
+        // --------------------------------------------------------------------------  collections
+
+
+        const person = {name: 'John', age: 28};
+ 
+        d3.keys(person);        // ["name", "age"]
+        d3.values(person);      // ["John", 28]
+        d3.entries(person);     // [{key: "name", value: "John"}, {key: "age", value: 28}]
+
+
+        // --------------------------------------------------------------------------  the enter - update - exit pattern
+
+
+        // Select all existing circles and bind data to it
+        let circles2 = d3.selectAll("circle")
+          .data(data);
+         
+        // Update existing circles
+        circles2.attr("fill", "red");       // gets updated again after the merge below
+         
+        // Remove surplus circles
+        circles2.exit().remove();
+         
+        // Add new circles and then create a new selection
+        // merging the new and the existing circles and then
+        // update the merged selection
+        circles2.enter()
+          .append("circle")
+          .merge(circles2)
+          .attr("fill", "green");
+
+
+        // --------------------------------------------------------------------------  scales
+
+        // used to map data from an input domain to an output range
+        // scales data so that it'll fit within an svg container, e.g.
+
+        const data2 = [40, 45, 125, 120, 500, 980, 1200];
+
+        const yScale = d3.scaleLinear()
+            .domain([10, 1200])         // min and max value in our data array
+            .range([0, 500]);           // min and max value of our svg container
+         
+        // Now we can see how our values are mapped
+        yScale(10);     // 0
+        yScale(500);    // 205.88
+        yScale(980);    // 407.56
+        yScale(1200);   // 500
+
+
+        d3.select("#barChart")
+        .selectAll("rect")
+        .data(data2)
+        .enter()
+        .append("rect")
+            .attr("width", function(d) { return yScale(d); })
+            .attr("height", 50)
+            .attr("x", 0)
+            .attr("y", function(d, i) { return (i * 50) + (i * 10) + 10; })
+            .style("fill", "blue")
+            .style("stroke", "black")
+            .style("stroke-width", "3px")
+            .style("opacity", .5);
+
+
+        // the range does not need to be numbers, e.g.,
+
+        const data3 = [1, 10, 5];
+
+        const colorScale = d3.scaleLinear()
+            .domain(data3)
+            .range(["red", "green"])
+            .interpolate(d3.interpolateHcl);
+
+        d3.select("#barChart2")
+        .selectAll("rect")
+        .data(data3)
+        .enter()
+        .append("rect")
+            .attr("width", (d, i) => 50 * i + 10)
+            .attr("height", 50)
+            .attr("x", 0)
+            .attr("y", (d, i) => i * 50)
+            .style("fill", (d) => colorScale(d))
+            .style("stroke", "black")
+            .style("stroke-width", "3px")
+            .style("opacity", .5);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    </script>
 </body>
 </html>
