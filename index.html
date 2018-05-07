@@ -38,9 +38,13 @@
         <input type="number" name="cb1"> me
     </div>
 
-    <svg width="500" height="500" style="border: 1px solid #ccc" id="barChart"></svg>
+    <svg width="500" height="500" style="border: 1px solid #ccc" id="barChart">
+        
+    </svg><svg width="500" height="500" style="border: 1px solid #ccc" id="barChart2">
+        
+    </svg>
 
-    <svg width="500" height="500" style="border: 1px solid #ccc" id="barChart2"></svg>
+    <div class="shape" style="width:100px; height:100px; background-color:blue; margin: auto"></div>
     
     <script type="text/javascript">
 
@@ -215,6 +219,10 @@
         .data(data2)
         .enter()
         .append("rect")
+            .transition()
+            .ease(d3.easeElastic)
+            .duration(3000)
+            .delay(1000)
             .attr("width", function(d) { return yScale(d); })
             .attr("height", 50)
             .attr("x", 0)
@@ -222,9 +230,12 @@
             .style("fill", "blue")
             .style("stroke", "black")
             .style("stroke-width", "3px")
-            .style("opacity", .5);
+            .style("opacity", .5)
+            .on("start", function() { console.log("Started"); })
+            .on("end", function() { console.log("Finished"); });
 
 
+        // --------------------------------------------------------------------------
         // the range does not need to be numbers, e.g.,
 
         const data3 = [1, 10, 5];
@@ -239,6 +250,7 @@
         .data(data3)
         .enter()
         .append("rect")
+            .transition()
             .attr("width", (d, i) => 50 * i + 10)
             .attr("height", 50)
             .attr("x", 0)
@@ -250,12 +262,30 @@
 
 
 
+        // -------------------------------------------------------------------------- transitions
 
+        // also see barcharts above for more transitions
 
+        let change = () => {
+            // Transition 1
+            d3.select("div.shape")
+            .transition()
+                .delay(1000)
+                .duration(2000)
+                .style("background-color", "red")
+                .style("border-radius", "50%")
+            // Transition 2
+            .transition()
+                .delay(1000)
+                .duration(2000)
+                .style("background-color", "blue")
+                .style("border-radius", "0px")
+        }
+        
+        change();
+        setInterval(change, 6000);
 
-
-
-
+        // -------------------------------------------------------------------------- shapes
 
 
 
